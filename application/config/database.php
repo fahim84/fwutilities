@@ -127,7 +127,7 @@ if(ENVIRONMENT == 'production')
         'dsn'	=> '',
         'hostname' => 'localhost',
         'username' => 'fahim84_fwu',
-        'password' => 'FWutilies123',
+        'password' => 'FWutilities123',
         'database' => 'fahim84_fwutilities',
         'dbdriver' => 'mysqli',
         'dbprefix' => '',
