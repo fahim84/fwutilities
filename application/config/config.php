@@ -27,7 +27,7 @@ $config['base_url'] = '';
 $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
 if(ENVIRONMENT == 'development')
 {
-    $config['base_url'] = 'http://localhost/fwutilies/';
+    $config['base_url'] = 'http://localhost/fwutilities/';
 }
 if(ENVIRONMENT == 'production')
 {

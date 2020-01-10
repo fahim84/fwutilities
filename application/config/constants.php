@@ -104,5 +104,7 @@ if(ENVIRONMENT == 'production')
 
 date_default_timezone_set('Asia/Karachi');
 
-define('SYSTEM_NAME', 'F W Utilies');
+define('SYSTEM_NAME', 'FWUtilies');
 define('SYSTEM_EMAIL', 'info@fwutilies.com');
+define('SUPPORT_EMAIL', 'info@fwutilies.com');
+define('SUPPORT_MOBILE', '+923002306075');
