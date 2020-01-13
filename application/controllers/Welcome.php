@@ -35,9 +35,10 @@ class Welcome extends CI_Controller {
             $this->email->clear(TRUE);
             $this->email->set_mailtype("html");
             $this->email->from(SYSTEM_EMAIL, $get_post['name']);
+            $this->email->reply_to($get_post['email'], $get_post['name']);
             $this->email->to(SUPPORT_EMAIL,SYSTEM_NAME);
             $this->email->subject($get_post['subject']);
-            $this->email->message($get_post['message']);
+            $this->email->message(nl2br($get_post['message']));
             if($this->email->send())
             {
                 $_SESSION['msg_success'][] = 'Email has been sent, you will get response soon.';
