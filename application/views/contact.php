@@ -35,31 +35,51 @@
                 <div class="col-sm-12 section-t8">
                     <div class="row">
                         <div class="col-md-7">
-                            <form class="form-a contactForm" action="" method="post" role="form">
+                            <?php if (validation_errors()): ?>
+                                <div class="alert alert-danger">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <?php echo validation_errors();?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if(isset($_SESSION['msg_error'])){ ?>
+                                <div class="alert alert-danger">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <?php echo display_error(); ?>
+                                </div>
+                            <?php } ?>
+
+                            <?php if(isset($_SESSION['msg_success'])){ ?>
+                                <div class="alert alert-success">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <?php echo display_success_message(); ?>
+                                </div>
+                            <?php } ?>
+                            <form class="form-a" action="" method="post" role="form">
                                 <div id="sendmessage">Your message has been sent. Thank you!</div>
                                 <div id="errormessage"></div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <div class="form-group">
-                                            <input type="text" name="name" class="form-control form-control-lg form-control-a" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars">
+                                            <input type="text" name="name" class="form-control form-control-lg form-control-a" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required>
                                             <div class="validation"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="form-group">
-                                            <input name="email" type="email" class="form-control form-control-lg form-control-a" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email">
+                                            <input name="email" type="email" class="form-control form-control-lg form-control-a" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" required>
                                             <div class="validation"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <div class="form-group">
-                                            <input type="text" name="subject" class="form-control form-control-lg form-control-a" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject">
+                                            <input type="text" name="subject" class="form-control form-control-lg form-control-a" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" required>
                                             <div class="validation"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <div class="form-group">
-                                            <textarea name="message" class="form-control" name="message" cols="45" rows="8" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
+                                            <textarea name="message" class="form-control" name="message" cols="45" rows="8" data-rule="required" data-msg="Please write something for us" placeholder="Message" required></textarea>
                                             <div class="validation"></div>
                                         </div>
                                     </div>
