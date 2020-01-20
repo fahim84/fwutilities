@@ -18,8 +18,11 @@
                     <a class="nav-link <?php echo $active == 'home' ? 'active' : ''; ?>" href="<?php echo base_url(); ?>welcome/index">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $active == 'about' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>welcome/about">About</a>
+                    <a class="nav-link <?php echo $active == 'resize' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>welcome/image_resize">Image Resizer</a>
                 </li>
+                <!--<li class="nav-item">
+                    <a class="nav-link <?php /*echo $active == 'about' ? 'active' : ''; */?>"  href="<?php /*echo base_url(); */?>welcome/about">About</a>
+                </li>-->
 
                 <li class="nav-item">
                     <a class="nav-link <?php echo $active == 'contact' ? 'active' : ''; ?>" href="<?php echo base_url(); ?>welcome/contact">Contact</a>

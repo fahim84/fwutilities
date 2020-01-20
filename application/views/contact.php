@@ -10,18 +10,6 @@
                         <h1 class="title-single">Contact US</h1>
                     </div>
                 </div>
-                <div class="col-md-12 col-lg-4">
-                    <nav aria-label="breadcrumb" class="breadcrumb-box d-flex justify-content-lg-end">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="<?php echo base_url(); ?>">Home</a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">
-                                Contact
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
             </div>
         </div>
     </section>
@@ -32,7 +20,7 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-sm-12 section-t8">
+                <div class="col-sm-12">
                     <div class="row">
                         <div class="col-md-7">
                             <?php if (validation_errors()): ?>
