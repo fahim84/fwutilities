@@ -21,7 +21,7 @@
                     <a class="nav-link <?php echo $active == 'resize' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/resize">Photo Resizer</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $active == 'resize' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/crop">Photo Cropper</a>
+                    <a class="nav-link <?php echo $active == 'crop' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/crop">Photo Cropper</a>
                 </li>
                 <!--<li class="nav-item">
                     <a class="nav-link <?php /*echo $active == 'about' ? 'active' : ''; */?>"  href="<?php /*echo base_url(); */?>welcome/about">About</a>

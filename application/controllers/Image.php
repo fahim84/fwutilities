@@ -35,6 +35,7 @@ class Image extends CI_Controller {
                     # Get uploading detail here
                     $upload_detail = $this->upload->data();
 
+                    $data['session_id'] = session_id();
                     $data['image'] = $upload_detail['file_name'];
                     $data['width'] = $upload_detail['image_width'];
                     $data['height'] = $upload_detail['image_height'];
@@ -89,18 +90,36 @@ class Image extends CI_Controller {
 
     public function crop()
     {
+        $get_post = $this->input->get_post(null,true);
+        $upload_path = './uploads/images/';
+
+        if(@$_GET['download'])
+        {
+            // Force Download
+            $this->load->helper('download');
+            force_download($upload_path.$_GET['download'], NULL);
+        }
+        $this->data['download'] = 0;
+
         // Set the validation rules
-        $this->form_validation->set_rules('target_width', 'Width', 'trim');
-        $this->form_validation->set_rules('target_height', 'Height', 'trim');
+        if(@$get_post['submit_button'] == 'crop')
+        {
+            $this->form_validation->set_rules('x', 'X', 'required|trim');
+            $this->form_validation->set_rules('y', 'Y', 'required|trim');
+            $this->form_validation->set_rules('w', 'W', 'required|trim');
+            $this->form_validation->set_rules('h', 'H', 'required|trim');
+            $this->form_validation->set_rules('image', 'Image', 'required|trim');
+        }
+        else
+        {
+            $this->form_validation->set_rules('image', 'Image', 'trim');
+        }
+
 
         $data = [];
         // If the validation worked
         if ($this->form_validation->run())
         {
-            $get_post = $this->input->get_post(null,true);
-
-            $upload_path = './uploads/images/';
-
             if($get_post['submit_button'] == 'upload')
             {
                 # File uploading configuration
@@ -117,6 +136,7 @@ class Image extends CI_Controller {
                     # Get uploading detail here
                     $upload_detail = $this->upload->data();
 
+                    $data['session_id'] = session_id();
                     $data['image'] = $upload_detail['file_name'];
                     $data['width'] = $upload_detail['image_width'];
                     $data['height'] = $upload_detail['image_height'];
@@ -145,27 +165,58 @@ class Image extends CI_Controller {
                 }
             }
 
-            if($get_post['submit_button'] == 'download')
+            if($get_post['submit_button'] == 'crop')
             {
                 $row = $this->db->get_where('images',['image_id' => $get_post['image_id']])->row();
-                if($get_post['target_width'] and $get_post['target_height'])
+                $image_path = $upload_path.$row->image;
+
+                $targ_w = 1056;
+                $targ_h = 800;
+                $jpeg_quality = 90;
+
+                $image_name = $this->input->get_post('image');
+                $src = $image_path;
+                $image_data = getimagesize($src);
+
+                $mimeType = $image_data['mime'];
+                if(preg_match('/^image\/(?:jpg|jpeg)$/i', $mimeType))
                 {
-                    # Get width and height and resize image keeping aspect ratio same
-                    $image_path = $upload_path.$row->image;
-
-                    resize_image2($image_path, $get_post['target_width'], '', 'W');
-                    resize_image2($image_path, '', $get_post['target_height'], 'W');
-
-                    // Force Download
-                    $this->load->helper('download');
-                    force_download($image_path, NULL);
+                    $img_r = imagecreatefromjpeg($src);
+                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
+                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
+                    imagejpeg($dst_r,$src,$jpeg_quality);
                 }
+                else if(preg_match('/^image\/png$/i', $mimeType))
+                {
+                    $img_r = imagecreatefrompng($src);
+                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
+                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
+                    imagepng($dst_r,$src,floor($jpeg_quality * 0.09));
+                }
+                else if(preg_match('/^image\/gif$/i', $mimeType))
+                {
+                    $img_r = imagecreatefromgif($src);
+                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
+                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
+                    imagegif($dst_r,$src);
+                }
+                else
+                {
+                    my_var_dump("Could not match mime type");
+                    $_SESSION['msg_error'][] = 'Could not match mime type';
+                }
+
+                //$_SESSION['msg_success'][] = 'Cropped successful';
+
+                $this->data['download'] = 1;
+                $data = (array)$row;
+
             }
 
         }
 
         $this->data['file'] = $data;
-        $this->data['active'] = 'resize';
-        $this->load->view('image_resize',$this->data);
+        $this->data['active'] = 'crop';
+        $this->load->view('image_crop',$this->data);
     }
 }
