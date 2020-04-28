@@ -46,7 +46,7 @@
                 <div class="col-sm-12">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-a" action="<?php echo base_url(); ?>welcome/image_resize" method="post" enctype="multipart/form-data" role="form">
+                            <form class="form-a" action="<?php echo base_url(); ?>image/resize" method="post" enctype="multipart/form-data" role="form">
                                 <div id="sendmessage">Your message has been sent. Thank you!</div>
                                 <div id="errormessage"></div>
                                 <div class="row">
