@@ -170,35 +170,42 @@ class Image extends CI_Controller {
                 $row = $this->db->get_where('images',['image_id' => $get_post['image_id']])->row();
                 $image_path = $upload_path.$row->image;
 
-                $targ_w = 1056;
-                $targ_h = 800;
+                $dst_x = 0;
+                $dst_y = 0;
+                $src_x = $get_post['x'];
+                $src_y = $get_post['y'];
+
+                $dst_w = $get_post['w'];
+                $dst_h = $get_post['h'];
+                $src_w = $get_post['w'];
+                $src_h = $get_post['h'];
+
                 $jpeg_quality = 90;
 
-                $image_name = $this->input->get_post('image');
-                $src = $image_path;
-                $image_data = getimagesize($src);
+                $image_data = getimagesize($image_path);
 
                 $mimeType = $image_data['mime'];
                 if(preg_match('/^image\/(?:jpg|jpeg)$/i', $mimeType))
                 {
-                    $img_r = imagecreatefromjpeg($src);
-                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
-                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
-                    imagejpeg($dst_r,$src,$jpeg_quality);
+                    $src_image = imagecreatefromjpeg($image_path);
+                    $dst_image = ImageCreateTrueColor( $dst_w, $dst_h );
+
+                    imagecopyresampled($dst_image,$src_image,$dst_x,$dst_y,$src_x,$src_y,$dst_w,$dst_h,$src_w,$src_h);
+                    imagejpeg($dst_image,$image_path,$jpeg_quality);
                 }
                 else if(preg_match('/^image\/png$/i', $mimeType))
                 {
-                    $img_r = imagecreatefrompng($src);
-                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
-                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
-                    imagepng($dst_r,$src,floor($jpeg_quality * 0.09));
+                    $src_image = imagecreatefrompng($image_path);
+                    $dst_image = ImageCreateTrueColor( $dst_w, $dst_h );
+                    imagecopyresampled($dst_image,$src_image,$dst_x,$dst_y,$src_x,$src_y,$dst_w,$dst_h,$src_w,$src_h);
+                    imagepng($dst_image,$image_path,floor($jpeg_quality * 0.09));
                 }
                 else if(preg_match('/^image\/gif$/i', $mimeType))
                 {
-                    $img_r = imagecreatefromgif($src);
-                    $dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
-                    imagecopyresampled($dst_r,$img_r,0,0,$_POST['x'],$_POST['y'],$targ_w,$targ_h,$_POST['w'],$_POST['h']);
-                    imagegif($dst_r,$src);
+                    $src_image = imagecreatefromgif($image_path);
+                    $dst_image = ImageCreateTrueColor( $dst_w, $dst_h );
+                    imagecopyresampled($dst_image,$src_image,$dst_x,$dst_y,$src_x,$src_y,$dst_w,$dst_h,$src_w,$src_h);
+                    imagegif($dst_image,$image_path);
                 }
                 else
                 {

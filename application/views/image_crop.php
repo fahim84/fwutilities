@@ -68,15 +68,23 @@
                                             <div class="col-md-12">
                                                 <button type="submit" name="submit_button" value="crop" class="btn btn-a">Apply Crop</button>
                                             </div>
-                                            <input type="hidden" name="image_id" value="<?php echo $file['image_id']; ?>">
-                                            <img id="image_preview" src="<?php echo base_url(); ?>uploads/images/<?php echo $file['image']; ?>" >
-                                            <input name="image" type="hidden" value="<?php echo $file['image']; ?>">
+                                            <input type="text" name="image_id" value="<?php echo $file['image_id']; ?>">
+
+                                            <input name="image" type="text" value="<?php echo $file['image']; ?>">
+
+
+                                            <div style=" width:1000px; overflow: auto; border: #0c5460; background-color: #8fdf82;">
+                                                <img id="image_preview" src="<?php echo base_url(); ?>uploads/images/<?php echo $file['image']; ?>" >
+                                            </div>
+
                                         </div>
 
-                                        <input type="hidden" id="x" name="x" />
-                                        <input type="hidden" id="y" name="y" />
-                                        <input type="hidden" id="w" name="w" />
-                                        <input type="hidden" id="h" name="h" />
+                                        <div>x<input type="text" id="x" name="x" /></div>
+                                        <div>y<input type="text" id="y" name="y" /></div>
+                                        <div>x2<input type="text" id="x2" name="x2" /></div>
+                                        <div>y2<input type="text" id="y2" name="y2" /></div>
+                                        <div>w<input type="text" id="w" name="w" /></div>
+                                        <div>h<input type="text" id="h" name="h" /></div>
                                     </form>
 
                                     <?php }else{ ?>
@@ -111,19 +119,26 @@
             font-size: 24px;
             display: block;
         }
+        /*.container{
+            margin: 0;
+            padding: 0;
+        }*/
     </style>
     <script>
         $(function(){
 
+            var box_width = $('#image_preview').width();
             $('#image_preview').Jcrop({
-                aspectRatio: 1056/800,
+                //aspectRatio: 1056/800,
+                //aspectRatio: 0,
                 onSelect: updateCoords,
-                setSelect: [0, 0, 1056, 800],// you have set proper proper x and y coordinates here
-                boxWidth: 1100,
-                boxHeight: 1100,
-                allowSelect: false,
-                allowResize: true,
-                canDrag:true
+                //setSelect: [0, 0, 1056, 800],// you have set proper proper x and y coordinates here
+                //boxWidth: 1100,
+                //boxHeight: 1100,
+                //allowSelect: true,
+                //allowResize: true,
+                //canDrag:true,
+                boxWidth: box_width
             });
 
         });
@@ -132,6 +147,8 @@
         {
             $('#x').val(c.x);
             $('#y').val(c.y);
+            $('#x2').val(c.x2);
+            $('#y2').val(c.y2);
             $('#w').val(c.w);
             $('#h').val(c.h);
         }
