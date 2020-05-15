@@ -1,9 +1,6 @@
 <?php $this->load->view('header',$this->data); ?>
 <?php $this->load->view('top_navigation',$this->data); ?>
 
-    <script src="<?php echo base_url(); ?>assets/js/jquery.Jcrop.js"></script>
-    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery.Jcrop.css" type="text/css" />
-
     <!--/ Intro Single star /-->
     <section class="intro-single">
 
