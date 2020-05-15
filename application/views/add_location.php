@@ -81,7 +81,7 @@
                                         </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <img src="<?php echo $file->modified_image_url; ?>?r=<?php echo time(); ?>" width="100%" >
+                                        <img src="<?php echo $file->modified_image_url; ?>" width="100%" >
                                     </div>
 
                                     <?php }else{ ?>

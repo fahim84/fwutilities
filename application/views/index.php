@@ -54,7 +54,7 @@
                                 you Download button to get your resized image.
                             </p>
                             <p>
-                                <a class="btn btn-info" href="<?php echo base_url(); ?>welcome/image_resize">Resize Your Image Now</a>
+                                <a class="btn btn-info" href="<?php echo base_url(); ?>/image/resize">Resize Your Image Now</a>
                             </p>
                         </div>
                     </div>
