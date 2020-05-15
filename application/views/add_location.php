@@ -61,7 +61,7 @@
                                                 <td><?php echo $file->latitude.'<strong>,</strong>'.$file->longitude; ?></td>
                                                 </tr>
                                             <tr>
-                                                <th><a target="_blank" href="<?php echo $file->location_url; ?>">View on Google Map</a></th>
+                                                <th><a target="_blank" class="btn btn-info" href="<?php echo $file->location_url; ?>">View on Google Map</a></th>
                                                 <td><?php echo $file->location_url; ?></td>
                                             </tr>
                                         <?php }else{ ?>
