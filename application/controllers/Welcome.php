@@ -52,4 +52,30 @@ class Welcome extends CI_Controller {
         $this->data['active'] = 'contact';
         $this->load->view('contact',$this->data);
     }
+
+    public function addwm()
+    {
+        // Load the stamp and the photo to apply the watermark to
+        $stamp = imagecreatefromjpeg('./uploads/images/square-logo-ftt.jpg');
+        $im = imagecreatefromjpeg('./uploads/images/IMG_4014.JPG');
+
+        // Set the margins for the stamp and get the height/width of the stamp image
+        $marge_right = 10;
+        $marge_bottom = 10;
+        $sx = imagesx($stamp);
+        $sy = imagesy($stamp);
+
+        //my_var_dump($sx);
+        //my_var_dump($sy);
+        //my_var_dump(imagesx($im) - $sx - $marge_right);
+        //my_var_dump(imagesy($im) - $sy - $marge_bottom);
+        // Copy the stamp image onto our photo using the margin offsets and the photo
+        // width to calculate positioning of the stamp.
+        imagecopy($im, $stamp, 0, 0, 0, 0, $sx, $sy);
+
+        // Output and free memory
+        header('Content-type: image/png');
+        imagejpeg($im);
+        imagedestroy($im);
+    }
 }

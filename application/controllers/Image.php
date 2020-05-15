@@ -43,12 +43,11 @@ class Image extends CI_Controller {
                     $data['file_type'] = $upload_detail['file_type'];
                     $data['image_type'] = $upload_detail['image_type'];
                     $data['file_size'] = $upload_detail['file_size'];
-                    $data['created_at'] = date('Y-m-d H:i:s');
-                    $data['updated_at'] = date('Y-m-d H:i:s');
 
-                    $this->db->insert('images',$data);
 
-                    $data['image_id'] = $this->db->insert_id();
+                    $id = $this->image_model->insert($data);
+
+                    $data['image_id'] = $id;
                     $image = $data['image'];
                 }
                 else
@@ -144,12 +143,10 @@ class Image extends CI_Controller {
                     $data['file_type'] = $upload_detail['file_type'];
                     $data['image_type'] = $upload_detail['image_type'];
                     $data['file_size'] = $upload_detail['file_size'];
-                    $data['created_at'] = date('Y-m-d H:i:s');
-                    $data['updated_at'] = date('Y-m-d H:i:s');
 
-                    $this->db->insert('images',$data);
+                    $id = $this->image_model->insert($data);
 
-                    $data['image_id'] = $this->db->insert_id();
+                    $data['image_id'] = $id;
                     $image = $data['image'];
                 }
                 else
@@ -225,5 +222,134 @@ class Image extends CI_Controller {
         $this->data['file'] = $data;
         $this->data['active'] = 'crop';
         $this->load->view('image_crop',$this->data);
+    }
+
+    public function add_location()
+    {
+        $get_post = $this->input->get_post(null,true);
+        $upload_path = './uploads/images/';
+
+        if(@$_GET['flip'])
+        {
+            $image_id = $_GET['image_id'];
+            $flip_mode = $_GET['flip'];
+            $file = $this->image_model->get_image_by_id($image_id);
+            $atti['output_image_name'] = $file->image;
+            $atti['output_relative_path'] = $upload_path;
+            $atti['image_path'] = $upload_path.$file->image;
+            $atti['file_type'] = $file->file_type;
+            $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
+            flipimage($atti);
+
+            if($file->location_url)
+            {
+                $atti['output_image_name'] = $file->modified_image;
+                $atti['size'] = round($file->width / 53);
+                $atti['angle'] = 0;
+                $atti['text_location'] = 'bottom_left';
+                $atti['image_width'] = $file->width;
+                $atti['image_height'] = $file->height;
+                $atti['string'] = $file->location_url;
+                add_text_to_image($atti);
+            }
+
+            redirect(base_url().'image/add_location/?image_id='.$image_id);
+        }
+        if(@$_GET['download'])
+        {
+            // Force Download
+            $this->load->helper('download');
+            force_download($upload_path.$_GET['download'], NULL);
+        }
+
+        // Set the validation rules
+        $this->form_validation->set_rules('image', 'Image', 'trim');
+
+        $data = [];
+
+        // If the validation worked
+        if ($this->form_validation->run())
+        {
+            # File uploading configuration
+            $config['upload_path'] = $upload_path;
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
+            $config['encrypt_name'] = true;
+            $config['max_size'] = 51200; //KB
+
+            $this->load->library('upload', $config);
+
+            # Try to upload file now
+            if ($this->upload->do_upload('image'))
+            {
+                # Get uploading detail here
+                $upload_detail = $this->upload->data();
+
+                $data['session_id'] = session_id();
+                $data['image'] = $upload_detail['file_name'];
+                $data['modified_image'] = $upload_detail['file_name'];
+                $data['width'] = $upload_detail['image_width'];
+                $data['height'] = $upload_detail['image_height'];
+                $data['extension'] = $upload_detail['file_ext'];
+                $data['file_type'] = $upload_detail['file_type'];
+                $data['image_type'] = $upload_detail['image_type'];
+                $data['file_size'] = $upload_detail['file_size'];
+
+                $id = $this->image_model->insert($data);
+                $file = $this->image_model->get_image_by_id($data['image_id']);
+
+                $data['image_id'] = $id;
+                $image = $data['image'];
+
+                $location = get_image_latitude_longitude($upload_path.$image);
+                if($location)
+                {
+                    $this->image_model->update($data['image_id'],$location);
+                    $file = $this->image_model->get_image_by_id($data['image_id']);
+
+                    // Add location to image
+                    $atti['output_image_name'] = 'm_'.$image;
+                    $atti['output_relative_path'] = $upload_path;
+                    $atti['image_path'] = $upload_path.$image;
+                    $atti['file_type'] = $data['file_type'];
+                    $atti['size'] = round($file->width / 53);
+                    $atti['angle'] = 0;
+                    $atti['text_location'] = 'bottom_left';
+                    $atti['image_width'] = $file->width;
+                    $atti['image_height'] = $file->height;
+                    $atti['string'] = $file->location_url;
+
+                    add_text_to_image($atti);
+                    $this->image_model->update($data['image_id'],['modified_image' => $atti['output_image_name']]);
+                }
+
+                redirect(base_url().'image/add_location/?image_id='.$data['image_id']);
+            }
+            else
+            {
+                $uploaded_file_array = (isset($_FILES['image']) and $_FILES['image']['name']!='') ? $_FILES['image'] : '';
+
+                # Show uploading error only when the file uploading attempt exist.
+                if( is_array($uploaded_file_array) )
+                {
+                    $uploading_error = $this->upload->display_errors();
+                    $_SESSION['msg_error'][] = $uploading_error;
+                }
+            }
+
+        }
+
+        if(@$_GET['image_id'] > 0)
+        {
+            $this->db->where('image_id',$_GET['image_id']);
+            $file = $this->image_model->get_image_by_id($_GET['image_id']);
+            $this->data['file'] = $file;
+        }
+        else
+        {
+            $this->data['file'] = null;
+        }
+
+        $this->data['active'] = 'location';
+        $this->load->view('add_location',$this->data);
     }
 }

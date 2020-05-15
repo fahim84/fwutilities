@@ -23,9 +23,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?php echo $active == 'crop' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/crop">Photo Cropper</a>
                 </li>
-                <!--<li class="nav-item">
-                    <a class="nav-link <?php /*echo $active == 'about' ? 'active' : ''; */?>"  href="<?php /*echo base_url(); */?>welcome/about">About</a>
-                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $active == 'location' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/add_location">Add Location</a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link <?php echo $active == 'contact' ? 'active' : ''; ?>" href="<?php echo base_url(); ?>welcome/contact">Contact</a>

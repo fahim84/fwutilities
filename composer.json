@@ -12,8 +12,9 @@
 	},
 	"require": {
 		"php": ">=7.2",
-		"twbs/bootstrap": "4.4.1"
-	},
+		"twbs/bootstrap": "4.4.1",
+      "ext-gd": "*"
+    },
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
 	},

@@ -6,50 +6,45 @@
 
     <!--/ Intro Single star /-->
     <section class="intro-single">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 col-lg-8">
-                    <div class="title-single-box">
-                        <h1 class="title-single">Photo Cropper</h1>
-                    </div>
-                </div>
 
-            </div>
-        </div>
     </section>
     <!--/ Intro Single End /-->
-
-
-
-    <!--/ Contact Star /-->
-    <section class="contact">
+    <section>
         <div class="container">
             <div class="row">
 
                 <div class="col-sm-12">
-                    <?php if (validation_errors()): ?>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <?php echo validation_errors();?>
-                        </div>
-                    <?php endif; ?>
+                    <h1 class="title-single">Photo Cropper</h1>
+        <?php if (validation_errors()): ?>
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <?php echo validation_errors();?>
+            </div>
+        <?php endif; ?>
 
-                    <?php if(isset($_SESSION['msg_error'])){ ?>
-                        <div class="alert alert-danger">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <?php echo display_error(); ?>
-                        </div>
-                    <?php } ?>
+        <?php if(isset($_SESSION['msg_error'])){ ?>
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <?php echo display_error(); ?>
+            </div>
+        <?php } ?>
 
-                    <?php if(isset($_SESSION['msg_success'])){ ?>
-                        <div class="alert alert-success">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            <?php echo display_success_message(); ?>
-                        </div>
-                    <?php } ?>
-                    <div class="row">
-                        <div class="col-md-12">
-                                <div class="row">
+        <?php if(isset($_SESSION['msg_success'])){ ?>
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <?php echo display_success_message(); ?>
+            </div>
+        <?php } ?>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!--/ Contact Star /-->
+
+
+
                                     <?php if($download){ ?>
                                         <div class="col-md-12 mb-3">
                                             <span>&nbsp;<a href="<?php echo base_url(); ?>image/crop?download=<?php echo $file['image']; ?>" class="btn btn-a">Download</a></span>
@@ -64,30 +59,33 @@
 
                                     <?php }elseif($file){ ?>
                                     <form onsubmit="return checkCoords();" class="form-a" action="<?php echo base_url(); ?>image/crop" method="post" enctype="multipart/form-data" role="form">
-                                        <div class="col-md-12 mb-3">
-                                            <div class="col-md-12">
+                                        <div class="col-md-12">
+                                            <div>
                                                 <button type="submit" name="submit_button" value="crop" class="btn btn-a">Apply Crop</button>
                                             </div>
-                                            <input type="text" name="image_id" value="<?php echo $file['image_id']; ?>">
+                                            <input type="hidden" name="image_id" value="<?php echo $file['image_id']; ?>">
 
-                                            <input name="image" type="text" value="<?php echo $file['image']; ?>">
+                                            <input name="image" type="hidden" value="<?php echo $file['image']; ?>">
 
+                                            <div><input type="hidden" id="x" name="x" /></div>
+                                            <div><input type="hidden" id="y" name="y" /></div>
+                                            <div><input type="hidden" id="x2" name="x2" /></div>
+                                            <div><input type="hidden" id="y2" name="y2" /></div>
+                                            <div><input type="hidden" id="w" name="w" /></div>
+                                            <div><input type="hidden" id="h" name="h" /></div>
 
-                                            <div style=" width:1000px; overflow: auto; border: #0c5460; background-color: #8fdf82;">
+                                            <div style="overflow: auto; border: #0c5460;">
                                                 <img id="image_preview" src="<?php echo base_url(); ?>uploads/images/<?php echo $file['image']; ?>" >
                                             </div>
-
                                         </div>
-
-                                        <div>x<input type="text" id="x" name="x" /></div>
-                                        <div>y<input type="text" id="y" name="y" /></div>
-                                        <div>x2<input type="text" id="x2" name="x2" /></div>
-                                        <div>y2<input type="text" id="y2" name="y2" /></div>
-                                        <div>w<input type="text" id="w" name="w" /></div>
-                                        <div>h<input type="text" id="h" name="h" /></div>
                                     </form>
 
                                     <?php }else{ ?>
+    <section class="contact">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-sm-12">
                                         <form class="form-a" action="<?php echo base_url(); ?>image/crop" method="post" enctype="multipart/form-data" role="form">
                                         <div class="col-md-12 mb-3">
                                             <div class="form-group">
@@ -99,17 +97,14 @@
                                             <button type="submit" name="submit_button" value="upload" class="btn btn-a">Upload</button>
                                         </div>
                                         </form>
-                                    <?php } ?>
-                                </div>
-
-
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
-    <!--/ Contact End /-->
+                                    <?php } ?>
+
+
+
 
     <style type="text/css">
         #target {

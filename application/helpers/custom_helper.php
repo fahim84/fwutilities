@@ -476,3 +476,211 @@ function are_colors_matching($hex_color1,$hex_color2,$distance=60)
 function custom_sort($a,$b) {
     return $a->weight<$b->weight;
 }
+
+function get_image_latitude_longitude($file)
+{
+    if (is_file($file)) {
+        $info = exif_read_data($file);
+        if (isset($info['GPSLatitude']) && isset($info['GPSLongitude']) &&
+            isset($info['GPSLatitudeRef']) && isset($info['GPSLongitudeRef']) &&
+            in_array($info['GPSLatitudeRef'], array('E','W','N','S')) && in_array($info['GPSLongitudeRef'], array('E','W','N','S'))) {
+
+            $GPSLatitudeRef  = strtolower(trim($info['GPSLatitudeRef']));
+            $GPSLongitudeRef = strtolower(trim($info['GPSLongitudeRef']));
+
+            $lat_degrees_a = explode('/',$info['GPSLatitude'][0]);
+            $lat_minutes_a = explode('/',$info['GPSLatitude'][1]);
+            $lat_seconds_a = explode('/',$info['GPSLatitude'][2]);
+            $lng_degrees_a = explode('/',$info['GPSLongitude'][0]);
+            $lng_minutes_a = explode('/',$info['GPSLongitude'][1]);
+            $lng_seconds_a = explode('/',$info['GPSLongitude'][2]);
+
+            $lat_degrees = $lat_degrees_a[0] / $lat_degrees_a[1];
+            $lat_minutes = $lat_minutes_a[0] / $lat_minutes_a[1];
+            $lat_seconds = $lat_seconds_a[0] / $lat_seconds_a[1];
+            $lng_degrees = $lng_degrees_a[0] / $lng_degrees_a[1];
+            $lng_minutes = $lng_minutes_a[0] / $lng_minutes_a[1];
+            $lng_seconds = $lng_seconds_a[0] / $lng_seconds_a[1];
+
+            $lat = (float) $lat_degrees+((($lat_minutes*60)+($lat_seconds))/3600);
+            $lng = (float) $lng_degrees+((($lng_minutes*60)+($lng_seconds))/3600);
+
+            //If the latitude is South, make it negative.
+            //If the longitude is west, make it negative
+            $GPSLatitudeRef  == 's' ? $lat *= -1 : '';
+            $GPSLongitudeRef == 'w' ? $lng *= -1 : '';
+
+            return array(
+                'latitude' => $lat,
+                'longitude' => $lng
+            );
+        }
+    }
+    return false;
+}
+
+function add_text_to_image($params)
+{
+    $output_image_name = $params['output_image_name'];
+    $output_relative_path = $params['output_relative_path'];
+    $output_image_url = $output_relative_path.$output_image_name;
+
+    $image_path = $params['image_path'];
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            $image_source = imagecreatefromgif($image_path);
+            break;
+
+        case "image/pjpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+
+        case "image/x-png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+    }
+
+    $text_color = imagecolorallocate($image_source, 0, 0, 0);
+    //$bg_color = imagecolorallocate($image_source, 128, 128, 128); // solid color
+    $bg_color = imagecolorallocatealpha($image_source, 128, 128, 128, 70); // transparent
+
+    $font_size = $params['size'];
+    $angle = $params['angle'];
+    $image_width = $params['image_width'];
+    $image_height = $params['image_height'];
+    $x = 25;
+    $y = 25;
+    $string = $params['string'];
+
+    $font_path = FCPATH.'assets/fonts/arial.ttf';
+
+    // Get the size of the text area
+    $dims = imagettfbbox($font_size, $angle, $font_path, $string);
+    $bg_padding = 20;
+    $text_width = $dims[4] - $dims[6];
+    $text_height = $dims[3] - $dims[5];
+    $bg_width = $text_width + ($bg_padding * 2);
+    $bg_height = $text_height + ($bg_padding * 2);
+    $bg_x = round($x * 50 /100); // 50% of $x
+    $bg_y = round($y * 50 /100); // 50% of $y
+
+    if($params['text_location'] == 'top_left')
+    {
+        $y = $y + $font_size + $bg_y;
+    }
+    if($params['text_location'] == 'bottom_left')
+    {
+        $y = $image_height-$font_size + $bg_y;
+        $bg_y = $image_height - $bg_height - $bg_y;
+    }
+
+    // Add text background
+    imagefilledrectangle($image_source, $bg_x, $bg_y, $bg_width+$bg_x, $bg_height+$bg_y, $bg_color);
+
+    imagettftext($image_source, $font_size, $angle, $x, $y, $text_color, $font_path, $string);
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            imagegif($image_source, $output_image_url);
+            break;
+
+        case "image/pjpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/png":
+            imagepng($image_source, $output_image_url);
+            break;
+
+        case "image/x-png":
+            imagepng($image_source, $output_image_url);
+            break;
+    }
+}
+
+function flipimage($params)
+{
+    $output_image_name = $params['output_image_name'];
+    $output_relative_path = $params['output_relative_path'];
+    $output_image_url = $output_relative_path.$output_image_name;
+    $image_path = $params['image_path'];
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            $image_source = imagecreatefromgif($image_path);
+            break;
+
+        case "image/pjpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+
+        case "image/x-png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+    }
+
+    imageflip($image_source, IMG_FLIP_VERTICAL);
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            imagegif($image_source, $output_image_url);
+            break;
+
+        case "image/pjpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/png":
+            imagepng($image_source, $output_image_url);
+            break;
+
+        case "image/x-png":
+            imagepng($image_source, $output_image_url);
+            break;
+    }
+}
