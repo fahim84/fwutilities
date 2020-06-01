@@ -65,6 +65,12 @@ class Image_model extends CI_Model
 			delete_file($upload_path.$entity->image);
 			$_SESSION['msg_error'][] = $entity->image.' file deleted!';
 		}
+        if($entity->image2 != '')
+        {
+            $upload_path = './uploads/images/';
+            delete_file($upload_path.$entity->image2);
+            $_SESSION['msg_error'][] = $entity->image2.' file deleted!';
+        }
         if($entity->modified_image != '')
         {
             $upload_path = './uploads/images/';
@@ -82,6 +88,7 @@ class Image_model extends CI_Model
         {
             $row = $query->row();
             $row->image_url = $row->image ? base_url().'uploads/images/'.$row->image : '';
+            $row->image2_url = $row->image2 ? base_url().'uploads/images/'.$row->image2 : '';
             $row->modified_image_url = $row->modified_image ? base_url().'uploads/images/'.$row->modified_image : '';
             $row->location_url = ($row->latitude or $row->longitude) ? "http://www.google.com/maps/place/$row->latitude,$row->longitude" : '';
             return $row;

@@ -253,6 +253,12 @@ function resize_image2($url, $newWidth='', $newHeight='', $Base='')
 		$height = $newHeight;
 		$new_image = imagecreatetruecolor($width, $newHeight);
 	}
+	else
+    {
+        $width = $newWidth;
+        $height = $newHeight;
+        $new_image = imagecreatetruecolor($newWidth,$newHeight);
+    }
 
 	// preserve transparency
 	if($imageType == "image/x-png" or $imageType == "image/png" or $imageType == "image/gif"){
@@ -681,6 +687,100 @@ function flipimage($params)
 
         case "image/x-png":
             imagepng($image_source, $output_image_url);
+            break;
+    }
+}
+
+function add_logo_to_image($params)
+{
+    $image_path = $params['image_path'];
+    $logo_path = $params['logo_path'];
+
+    resize_image2($logo_path,$params['width'],$params['height']);
+
+    $image_mime_type = mime_content_type($image_path);
+    $logo_mime_type = mime_content_type($logo_path);
+
+    switch($image_mime_type)
+    {
+        case "image/gif":
+            $image_source = imagecreatefromgif($image_path);
+            break;
+
+        case "image/pjpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+
+        case "image/x-png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+    }
+
+    switch($logo_mime_type)
+    {
+        case "image/gif":
+            $logo_source = imagecreatefromgif($logo_path);
+            break;
+
+        case "image/pjpeg":
+            $logo_source = imagecreatefromjpeg($logo_path);
+            break;
+
+        case "image/jpeg":
+            $logo_source = imagecreatefromjpeg($logo_path);
+            break;
+
+        case "image/jpg":
+            $logo_source = imagecreatefromjpeg($logo_path);
+            break;
+
+        case "image/png":
+            $logo_source = imagecreatefrompng($logo_path);
+            break;
+
+        case "image/x-png":
+            $logo_source = imagecreatefrompng($logo_path);
+            break;
+    }
+
+    imagecopy($image_source, $logo_source, $params['x'], $params['y'], 0, 0, $params['width'], $params['height']);
+
+    switch($image_mime_type)
+    {
+        case "image/gif":
+            imagegif($image_source, $image_path);
+            break;
+
+        case "image/pjpeg":
+            imagejpeg($image_source, $image_path, 100);
+            break;
+
+        case "image/jpeg":
+            imagejpeg($image_source, $image_path, 100);
+            break;
+
+        case "image/jpg":
+            imagejpeg($image_source, $image_path, 100);
+            break;
+
+        case "image/png":
+            imagepng($image_source, $image_path);
+            break;
+
+        case "image/x-png":
+            imagepng($image_source, $image_path);
             break;
     }
 }

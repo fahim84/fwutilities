@@ -340,7 +340,6 @@ class Image extends CI_Controller {
 
         if(@$_GET['image_id'] > 0)
         {
-            $this->db->where('image_id',$_GET['image_id']);
             $file = $this->image_model->get_image_by_id($_GET['image_id']);
             $this->data['file'] = $file;
         }
@@ -351,5 +350,186 @@ class Image extends CI_Controller {
 
         $this->data['active'] = 'location';
         $this->load->view('add_location',$this->data);
+    }
+
+    public function add_logo()
+    {
+        $get_post = $this->input->get_post(null,true);
+        $upload_path = './uploads/images/';
+
+        if(@$_GET['flip'])
+        {
+            $image_id = $_GET['image_id'];
+            $flip_mode = $_GET['flip'];
+            $file = $this->image_model->get_image_by_id($image_id);
+            $atti['output_image_name'] = $file->modified_image;
+            $atti['output_relative_path'] = $upload_path;
+            $atti['image_path'] = $upload_path.$file->modified_image;
+            $atti['file_type'] = $file->file_type;
+            $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
+            flipimage($atti);
+
+            redirect(base_url().'image/add_logo/?image_id='.$image_id);
+        }
+        if(@$get_post['image_id'])
+        {
+            $image_id = $get_post['image_id'];
+            $file = $this->image_model->get_image_by_id($image_id);
+
+            //my_var_dump($file);
+            //my_var_dump($get_post);
+            $width_percent = $get_post['width'] * 100 / $get_post['image_container_width'];
+            $height_percent = $get_post['height'] * 100 / $get_post['image_container_height'];
+
+            if($get_post['image_container_width'] < $file->width)
+            {
+                $width_percent = -1 * abs($width_percent);
+            }
+            if($get_post['image_container_height'] < $file->height)
+            {
+                $height_percent = -1 * abs($height_percent);
+            }
+
+            $x_percent = $get_post['x'] * 100 / $get_post['image_container_width'];
+            $y_percent = $get_post['y'] * 100 / $get_post['image_container_height'];
+
+            if($get_post['image_container_width'] < $file->width)
+            {
+                $x_percent = -1 * abs($x_percent);
+            }
+            if($get_post['image_container_height'] < $file->height)
+            {
+                $y_percent = -1 * abs($y_percent);
+            }
+
+            //my_var_dump($width_percent);
+            //my_var_dump($height_percent);
+            $alti['image_path'] = $upload_path.$file->modified_image;
+            $alti['logo_path'] = $upload_path.$file->image2;
+            $alti['x'] = round($file->width * $x_percent / 100);
+            $alti['y'] = round($file->height * $y_percent / 100);
+            $alti['width'] = round($file->width * $width_percent / 100);
+            $alti['height'] = round($file->height * $height_percent / 100);
+
+            //my_var_dump($alti);
+            //exit;
+            add_logo_to_image($alti);
+
+            // Force Download
+            $this->load->helper('download');
+            force_download($upload_path.$file->modified_image, NULL);
+        }
+
+        // Set the validation rules
+        $this->form_validation->set_rules('image', 'Image', 'trim');
+        $this->form_validation->set_rules('image2', 'Logo', 'trim');
+
+        $data = [];
+
+        // If the validation worked
+        if ($this->form_validation->run())
+        {
+            # File uploading configuration
+            $config['upload_path'] = $upload_path;
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
+            $config['encrypt_name'] = true;
+            $config['max_size'] = 51200; //KB
+
+            $this->load->library('upload', $config);
+
+            # Try to upload file now
+            if ($this->upload->do_upload('image'))
+            {
+                # Get uploading detail here
+                $upload_detail = $this->upload->data();
+
+                $data['session_id'] = session_id();
+                $data['image'] = $upload_detail['file_name'];
+                $data['modified_image'] = $upload_detail['file_name'];
+                $data['width'] = $upload_detail['image_width'];
+                $data['height'] = $upload_detail['image_height'];
+                $data['extension'] = $upload_detail['file_ext'];
+                $data['file_type'] = $upload_detail['file_type'];
+                $data['image_type'] = $upload_detail['image_type'];
+                $data['file_size'] = $upload_detail['file_size'];
+
+                $id = $this->image_model->insert($data);
+                $file = $this->image_model->get_image_by_id($data['image_id']);
+
+                $data['image_id'] = $id;
+                $image = $data['image'];
+
+                # Try to upload file now
+                if ($this->upload->do_upload('image2'))
+                {
+                    # Get uploading detail here
+                    $upload_detail = $this->upload->data();
+
+                    $logo['image2'] = $upload_detail['file_name'];
+                    $this->image_model->update($id,$logo);
+                }
+                redirect(base_url().'image/add_logo/?image_id='.$id);
+            }
+            else
+            {
+                $uploaded_file_array = (isset($_FILES['image']) and $_FILES['image']['name']!='') ? $_FILES['image'] : '';
+
+                # Show uploading error only when the file uploading attempt exist.
+                if( is_array($uploaded_file_array) )
+                {
+                    $uploading_error = $this->upload->display_errors();
+                    $_SESSION['msg_error'][] = $uploading_error;
+                }
+            }
+
+            if(@$_GET['image_id'] > 0)
+            {
+                # Try to upload file now
+                if ($this->upload->do_upload('image2'))
+                {
+                    $id = $_GET['image_id'];
+
+                    $entity = $this->image_model->get_image_by_id($id);
+                    if($entity->image2)
+                    {
+                        // delete existing logo
+                        delete_file($upload_path.$entity->image2);
+                        $_SESSION['msg_error'][] = $entity->image2.' file deleted!';
+                    }
+
+                    # Get uploading detail here
+                    $upload_detail = $this->upload->data();
+
+                    $logo['image2'] = $upload_detail['file_name'];
+                    $this->image_model->update($id,$logo);
+                }
+            }
+            redirect(base_url().'image/add_logo/?image_id='.$id);
+
+        }
+
+        if(@$_GET['image_id'] > 0)
+        {
+            $file = $this->image_model->get_image_by_id($_GET['image_id']);
+            $this->data['file'] = $file;
+        }
+        else
+        {
+            $this->data['file'] = null;
+        }
+
+        $this->data['active'] = 'logo';
+        $this->load->view('add_logo',$this->data);
+    }
+
+    public function add_logo_test()
+    {
+        $upload_path = './uploads/images/';
+
+        // Add location to image
+        $alti['image_path'] = $upload_path.'m_43c61a3246683c77d757830566ca02d1.JPG';
+        $alti['logo_path'] = $upload_path.'f2fa08bb8ef016e0c0f8e911ac48fee4.png';
+
+        add_logo_to_image($alti);
     }
 }

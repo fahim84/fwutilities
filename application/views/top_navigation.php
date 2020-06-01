@@ -26,7 +26,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?php echo $active == 'location' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/add_location">Add Location</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $active == 'logo' ? 'active' : ''; ?>"  href="<?php echo base_url(); ?>image/add_logo">Add Logo</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $active == 'contact' ? 'active' : ''; ?>" href="<?php echo base_url(); ?>welcome/contact">Contact</a>
                 </li>
