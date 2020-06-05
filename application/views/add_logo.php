@@ -145,6 +145,8 @@
 
 <script>
 
+    <?php if($file){ ?>
+
     image_container_width = $("#image").width();
     image_container_height = $("#image").height();
 
@@ -198,6 +200,8 @@
         });
 
     })();
+
+    <?php } ?>
 </script>
 
 <?php $this->load->view('footer',$this->data); ?>
