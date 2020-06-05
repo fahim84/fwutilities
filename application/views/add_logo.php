@@ -14,7 +14,7 @@
             <div class="row">
 
                 <div class="col-sm-12">
-                    <h1 class="title-single">Add Logo to Image</h1>
+                    <!--<h1 class="title-single">Add Logo to Image</h1>-->
         <?php if (validation_errors()): ?>
             <div class="alert alert-danger">
                 <button type="button" class="close" data-dismiss="alert">×</button>
