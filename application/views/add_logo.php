@@ -125,10 +125,18 @@
 
                                         <form class="form-a" action="<?php echo base_url(); ?>image/add_logo" method="post" enctype="multipart/form-data" role="form">
                                         <div class="col-md-12 mb-3">
+                                            <h1>Upload Image</h1>
                                             <div class="form-group">
                                                 <input name="image" type="file" id="image" accept="image/*" required class="form-control form-control-lg form-control-a">
                                             </div>
                                         </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <h1>Upload Logo</h1>
+                                                <div class="form-group">
+                                                    <input name="image2" type="file" id="image2" accept="image/*" required class="form-control form-control-lg form-control-a">
+                                                </div>
+                                            </div>
 
                                         <div class="col-md-12">
                                             <button type="submit" name="submit_button" value="upload" class="btn btn-a">Upload Image</button>
