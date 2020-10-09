@@ -374,6 +374,9 @@ class Image extends CI_Controller {
             $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
             //flipimage($atti);
             rotate_image($atti);
+            $width = get_width($upload_path.$file->image);
+            $height = get_height($upload_path.$file->image);
+            $this->image_model->update($image_id,['width' => $width,'height' => $height]);
 
             redirect(base_url().'image/add_logo/?image_id='.$image_id);
         }
