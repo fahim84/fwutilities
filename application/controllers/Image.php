@@ -241,9 +241,13 @@ class Image extends CI_Controller {
             $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
             //flipimage($atti);
             rotate_image($atti);
+            $width = get_width($upload_path.$file->image);
+            $height = get_height($upload_path.$file->image);
+            $this->image_model->update($image_id,['width' => $width,'height' => $height]);
 
             if($file->location_url)
             {
+                $file = $this->image_model->get_image_by_id($image_id);
                 $atti['output_image_name'] = $file->modified_image;
                 $atti['size'] = round($file->width / 53);
                 $atti['angle'] = 0;
