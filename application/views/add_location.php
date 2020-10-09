@@ -51,6 +51,7 @@
                                             <span>&nbsp;<a href="<?php echo base_url(); ?>image/add_location?download=<?php echo $file->modified_image; ?>" class="btn btn-primary">Download</a></span>
                                             <span>&nbsp;<a href="<?php echo base_url(); ?>image/add_location" class="btn btn-danger">Try Upload Again</a></span>
                                             <a class="btn btn-warning" href="<?php echo base_url(); ?>image/add_location/?image_id=<?php echo $file->image_id; ?>&flip=IMG_FLIP_VERTICAL">Flip Vertical</a>
+                                            <a class="btn btn-warning" href="<?php echo base_url(); ?>image/add_location/?image_id=<?php echo $file->image_id; ?>&flip=IMG_FLIP_HORIZONTAL">Flip Horizontal</a>
                                         </div>
 
                                         <div class="col-md-12 mb-3">

@@ -633,6 +633,7 @@ function flipimage($params)
     $output_relative_path = $params['output_relative_path'];
     $output_image_url = $output_relative_path.$output_image_name;
     $image_path = $params['image_path'];
+    $flip_mode = $params['flip_mode'];
 
     switch($params['file_type'])
     {
@@ -661,7 +662,7 @@ function flipimage($params)
             break;
     }
 
-    imageflip($image_source, IMG_FLIP_VERTICAL);
+    imageflip($image_source, $flip_mode);
 
     switch($params['file_type'])
     {
