@@ -239,7 +239,8 @@ class Image extends CI_Controller {
             $atti['image_path'] = $upload_path.$file->image;
             $atti['file_type'] = $file->file_type;
             $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
-            flipimage($atti);
+            //flipimage($atti);
+            rotate_image($atti);
 
             if($file->location_url)
             {
@@ -367,7 +368,8 @@ class Image extends CI_Controller {
             $atti['image_path'] = $upload_path.$file->modified_image;
             $atti['file_type'] = $file->file_type;
             $atti['flip_mode'] = $flip_mode ? $flip_mode : 'IMG_FLIP_VERTICAL';
-            flipimage($atti);
+            //flipimage($atti);
+            rotate_image($atti);
 
             redirect(base_url().'image/add_logo/?image_id='.$image_id);
         }

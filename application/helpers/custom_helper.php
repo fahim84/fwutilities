@@ -633,7 +633,6 @@ function flipimage($params)
     $output_relative_path = $params['output_relative_path'];
     $output_image_url = $output_relative_path.$output_image_name;
     $image_path = $params['image_path'];
-    $flip_mode = $params['flip_mode'];
 
     switch($params['file_type'])
     {
@@ -662,7 +661,71 @@ function flipimage($params)
             break;
     }
 
-    imageflip($image_source, $flip_mode);
+    imageflip($image_source, IMG_FLIP_VERTICAL);
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            imagegif($image_source, $output_image_url);
+            break;
+
+        case "image/pjpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpeg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/jpg":
+            imagejpeg($image_source, $output_image_url, 100);
+            break;
+
+        case "image/png":
+            imagepng($image_source, $output_image_url);
+            break;
+
+        case "image/x-png":
+            imagepng($image_source, $output_image_url);
+            break;
+    }
+}
+
+function rotate_image($params)
+{
+    $output_image_name = $params['output_image_name'];
+    $output_relative_path = $params['output_relative_path'];
+    $output_image_url = $output_relative_path.$output_image_name;
+    $image_path = $params['image_path'];
+
+    switch($params['file_type'])
+    {
+        case "image/gif":
+            $image_source = imagecreatefromgif($image_path);
+            break;
+
+        case "image/pjpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpeg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/jpg":
+            $image_source = imagecreatefromjpeg($image_path);
+            break;
+
+        case "image/png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+
+        case "image/x-png":
+            $image_source = imagecreatefrompng($image_path);
+            break;
+    }
+
+    $image_source = imagerotate($image_source, 90,0);
 
     switch($params['file_type'])
     {
